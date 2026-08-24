@@ -81,5 +81,4 @@ documento Word de la Entrega 1.
 
 ## Autoría
 
-Grupo Rompebrechas — Curso Data Mining, Universidad del Pacífico.
-Docente: Soledad Espezúa Llerena.
+Grupo Rompebrechas — Curso Data Mining. Mateo Pereyra - Raul Porras - Mauro Martines
