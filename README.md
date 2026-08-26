@@ -24,7 +24,7 @@ documento Word de la Entrega 1.
 ## Estructura del repositorio
 
 ```
-├── Rompebrechas_Final_corregido.ipynb   # Notebook con todo el proceso
+├── Rompebrechas_Final.ipynb   # Notebook con todo el proceso
 ├── Rompebrechas_Entrega1_Hito_formativo.docx
 ├── data/
 │   ├── Lineal_3AP_1.dbf / .zip
@@ -46,12 +46,18 @@ documento Word de la Entrega 1.
    ```
 2. Descargar las 3 fuentes de datos desde los enlaces de la tabla y colocarlas en
    `data/` (o en la misma carpeta que el notebook si se usa Google Colab).
-3. Abrir `Rompebrechas_Final_corregido.ipynb` en Google Colab o Jupyter.
+3. Abrir `Rompebrechas_Final.ipynb` en Google Colab o Jupyter.
 4. Instalar las dependencias que no vienen preinstaladas:
    ```python
    !pip install dbfread plotly
    ```
-5. Ejecutar todas las celdas en orden (`Entorno de ejecución → Ejecutar todas` en
+5. **Antes de ejecutar todo:** en la celda del segundo gráfico (comparación por
+   gestión en Lima Metropolitana) falta definir `data_lima_metro`. Agregar esta
+   línea justo antes de esa celda:
+   ```python
+   data_lima_metro = base_censo_final[base_censo_final["D_REGION"] == "DRE LIMA METROPOLITANA"].copy()
+   ```
+6. Ejecutar todas las celdas en orden (`Entorno de ejecución → Ejecutar todas` en
    Colab). El notebook cubre, en este orden:
    - carga de las 3 fuentes;
    - inspección inicial (tamaño, tipos, faltantes, valores distintos);
@@ -59,26 +65,38 @@ documento Word de la Entrega 1.
      fuera de rango, categorías no uniformes) por fuente;
    - limpieza y decisiones documentadas por fuente;
    - validación de la clave de integración (`COD_MOD` + `ANEXO`) y de duplicados;
-   - integración de las 3 fuentes (censo + padrón por colegio, denuncias agregadas
-     por DRE);
-   - 3 visualizaciones iniciales con Plotly;
+   - integración de las 3 fuentes: censo + padrón por colegio (llave `COD_MOD` +
+     `ANEXO`), y denuncias agregadas por **UGEL** (`UGEL_norm`) unidas a la base
+     escolar;
+   - 3 visualizaciones con Plotly: denuncias por tipo de violencia y departamento;
+     promedio de denuncias por tipo de gestión en Lima Metropolitana; y box plot
+     de esa misma comparación;
    - hallazgos preliminares.
-6. La base integrada final se exporta como `base_integrada_rompebrechas.csv`.
 
 ## Unidad de análisis
 
 - Censo (Lineal_3AP) y Padrón Web: cada fila es un colegio (llave `COD_MOD`+`ANEXO`).
 - Denuncias (SíseVe): cada fila es un caso de denuncia (sin identificador de colegio,
-  por lo que se integra a nivel de DRE).
+  por lo que se integra por **UGEL**, no por colegio).
 
-## Próximos pasos
+## Limitaciones conocidas
 
-- Explorar acceso a una fuente de denuncias con mayor detalle geográfico (UGEL o
-  código modular) para bajar el análisis a nivel de colegio.
-- Construir tasas de denuncia por colegio (no solo conteos absolutos) para comparar
-  regiones de forma más justa.
-- Avanzar hacia un análisis de segmentación o detección de outliers regionales.
+- Solo el 78.2% de las UGEL de las denuncias coincide textualmente con las UGEL del
+  padrón (diferencias de tildes/formato en el nombre); el resto queda sin dato de
+  denuncias en la base integrada.
+- Al sumar el conteo de denuncias por departamento, el resultado se infla porque cada
+  colegio de una misma UGEL repite el mismo valor agregado — los totales absolutos del
+  gráfico 1 deben leerse en términos relativos entre departamentos, no como cifras
+  reales.
+- La comparación de gestión pública vs. privada (gráficos 2 y 3) está confundida por
+  este mismo efecto: la mediana de denuncias es igual en las tres categorías de
+  gestión, así que la diferencia de promedios refleja cómo se distribuyen los colegios
+  entre UGEL, no un patrón real asociado al tipo de gestión.
+
+
 
 ## Autoría
 
-Grupo Rompebrechas — Curso Data Mining. Mateo Pereyra - Raul Porras - Mauro Martines
+Grupo Rompebrechas — Curso Data Mining, Universidad del Pacífico.
+Mateo Pereyra · Raúl Porras · Mauro Martínez.
+
