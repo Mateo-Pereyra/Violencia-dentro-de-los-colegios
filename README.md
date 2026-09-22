@@ -12,7 +12,6 @@ Este repositorio contiene el notebook `Rompebrechas_Hito2.ipynb`, que reproduce 
 | Repositorio GitHub actualizado (código, notebook, README, instrucciones) | este repositorio |
 | Enlace al repositorio | `https://github.com/Mateo-Pereyra/Violencia-dentro-de-los-colegios` |
 
-> El enlace al repositorio también debe incluirse en la primera página del documento Word.
 
 ---
 
