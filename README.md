@@ -10,7 +10,7 @@ Este repositorio contiene el notebook `Rompebrechas_Hito2.ipynb`, que reproduce 
 | Documento Word con el desarrollo y justificación de las decisiones | `docs/Rompebrechas_Hito2.docx` |
 | Código fuente documentado (Python/Colab) | `Rompebrechas_Hito2.ipynb` |
 | Repositorio GitHub actualizado (código, notebook, README, instrucciones) | este repositorio |
-| Enlace al repositorio | `[COMPLETAR: URL del repositorio GitHub]` |
+| Enlace al repositorio | `https://github.com/Mateo-Pereyra/Violencia-dentro-de-los-colegios` |
 
 > El enlace al repositorio también debe incluirse en la primera página del documento Word.
 
