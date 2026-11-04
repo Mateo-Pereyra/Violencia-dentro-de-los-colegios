@@ -1,0 +1,27 @@
+variable,tipo,descripción,% faltantes
+COD_MOD,Identificador,"Código modular (llave, solo trazabilidad)",0.0
+ANEXO,Identificador,"Anexo (llave, solo trazabilidad)",0.0
+D_DPTO,Etiqueta,"Departamento, para agrupar resultados",0.0
+mat_total,Numérica,Matrícula total de primaria 2025,0.0
+pct_mujeres,Numérica,Proporción de mujeres matriculadas,0.0
+incidencias_libro,Numérica,Incidencias anotadas en el libro en 2024,15.8
+casos_siseve,Numérica,Casos reportados al SíseVe hasta la fecha del Censo 2025,0.1
+tasa_incidencias_100,Derivada,Incidencias por cada 100 estudiantes,31.5
+tasa_casos_siseve_100,Derivada,Casos SíseVe por cada 100 estudiantes,20.5
+tasa_repeticion,Derivada,Repitentes (C101 + C201) / matrícula final,0.3
+tasa_retiro,Derivada,Retirados / matrícula final,0.3
+indice_convivencia,Derivada,Índice de gestión de la convivencia (0 a 3),0.1
+log_mat_total,Transformada,Logaritmo de la matrícula,0.0
+registra_incidencia,Discretizada / binaria,1 si registró al menos una incidencia,15.8
+resp_convivencia,Binaria,Tiene responsable de convivencia (P123B),0.1
+tiene_libro,Binaria,Tiene libro de registro de incidencias (P125B); 0 = no puede registrar,0.1
+conoce_protocolos,Binaria,El director conoce los protocolos (P128B),0.1
+reporta_ugel,Binaria,Sabe que debe reportar a la UGEL (P129B),0.1
+afiliado_siseve,Binaria,Afiliado al SíseVe (P124B),0.1
+actividad_esi,Binaria,Actividad de ESI con familias (P116A; 0 si no hace actividades con familias),0.0
+consulta_rnssc,Binaria,Consulta el registro de sancionados (P127B),0.1
+urbano,Binaria,1 si el área es urbana,0.0
+gestion_privada,One-hot,Gestión privada,0.0
+gestion_publica,One-hot,Pública de gestión directa,0.0
+gestion_publica_convenio,One-hot,Pública de gestión privada (convenio),0.0
+matricula_imputada,Binaria / control,1 si el MINEDU imputó la matrícula,0.0
