@@ -1,36 +1,50 @@
-# Rompebrechas: registro de violencia escolar en colegios de primaria del Perú
+# Rompebrechas: ¿un cero significa que no hubo violencia escolar?
 
 Proyecto del curso **Data Mining** (Universidad del Pacífico). Grupo Rompebrechas: Mateo Pereyra, Raúl Porras y Mauro Martínez.
 Docente: Soledad Espezúa Llerena.
 
-**Estado: Hito 3, revisión metodológica e implementación inicial.** Los resultados son preliminares; las conclusiones se cierran en el Hito 4.
+**Estado: entrega final (Hito 4).** Resultados definitivos, conclusiones y recomendaciones para la UGEL.
 
 ## Problema
 
-La mayoría de colegios de primaria reporta cero casos de violencia escolar. Ese cero puede significar que no hubo violencia o que el colegio no tiene cómo registrarla. Si se lee como "aquí no pasa nada", los colegios con menos capacidad quedan fuera de la atención.
+El 71.5 % de los colegios de primaria del Perú tiene libro de incidencias y anotó **cero** casos de violencia en 2024, y otro 16.8 % ni siquiera tiene libro. Ese cero puede significar que no hubo violencia o que el colegio no tiene cómo registrarla. Si se lee como "aquí no pasa nada", los colegios con menos capacidad quedan fuera de la atención justamente porque no registran.
 
-- **Pregunta:** ¿qué características institucionales se asocian a que un colegio registre casos de violencia, y se relaciona ese registro con la repetición y el retiro de sus estudiantes (2024-2025)?
-- **Usuarios:** especialistas de convivencia de las UGEL y DRE, y el equipo del MINEDU a cargo del SíseVe.
-- **Beneficiarios:** estudiantes de primaria.
-- **Objetivo:** agrupar a los colegios según su contexto y sus instrumentos de convivencia, para priorizar dónde un cero es menos confiable.
+- **Pregunta:** ¿qué características institucionales se asocian a que un colegio de primaria registre casos de violencia escolar, y se relaciona ese registro con la repetición y el retiro de sus estudiantes (2024-2025)?
+- **Usuarios:** especialistas de convivencia escolar de las UGEL y DRE, y el equipo del MINEDU a cargo del SíseVe.
+- **Beneficiarios:** estudiantes de primaria, en especial los de colegios donde hoy la violencia no se registra.
+- **Objetivo:** ayudar a la UGEL a priorizar los colegios donde un cero dice poco.
 
 ## Datos
 
-Cada fila es un colegio de primaria (`COD_MOD` + `ANEXO`). Todas las fuentes son públicas y del MINEDU (ESCALE).
+Cada fila es un colegio de primaria (`COD_MOD` + `ANEXO`): **37,354 colegios**. Todas las fuentes son públicas.
 
-| Fuente | Origen |
-|---|---|
-| Censo Educativo 2025 (cédula 3AP), Matrícula 2025 y Resultado del Ejercicio 2025 | [ESCALE: Censo Educativo](https://escale.minedu.gob.pe/uee/-/document_library_display/GMv7/view/10632985) |
-| Padrón de Instituciones Educativas | [ESCALE: Padrón](https://escale.minedu.gob.pe/web/inicio/padron-de-iiee) |
-| Límites departamentales (IGN, 2020) | `Código/peru_shapes/` |
+| Fuente | Qué aporta | Origen |
+|---|---|---|
+| Censo Educativo 2025 (cédula 3AP) | Respuestas del director sobre convivencia, tutoría y ESI | [ESCALE](https://escale.minedu.gob.pe/uee/-/document_library_display/GMv7/view/10632985) |
+| Resultado del Ejercicio Educativo 2025 | Repetición y retiro | [ESCALE](https://escale.minedu.gob.pe/uee/-/document_library_display/GMv7/view/10632985) |
+| Matrícula 2025 | Denominador de las tasas | [ESCALE](https://escale.minedu.gob.pe/uee/-/document_library_display/GMv7/view/10632985) |
+| Padrón de Instituciones Educativas | Gestión, área, departamento y coordenadas | [ESCALE: Padrón](https://escale.minedu.gob.pe/web/inicio/padron-de-iiee) |
+| Límites departamentales (IGN, 2020) | Mapas | `Código/peru_shapes/` |
 
-**No hay que descargar los datos a mano:** el notebook los lee de [Hugging Face](https://huggingface.co/datasets/themasterdrop/rompebrechas-violencia-escolar), por lo que necesita internet.
+**No hay que descargar los datos a mano:** los `.dbf` originales se filtraron a primaria y se publicaron en [Hugging Face](https://huggingface.co/datasets/themasterdrop/rompebrechas-violencia-escolar). El notebook los lee de ahí, por lo que necesita internet.
 
-## Técnica seleccionada
+## Técnicas
 
-**K-means** sobre 9 atributos estandarizados con z-score (37,260 colegios): matrícula en logaritmo, área urbana, gestión privada, responsable de convivencia, afiliación al SíseVe, conocimiento de protocolos, reporte a la UGEL, consulta del RNSSC y actividades de ESI con familias. El registro de incidencias y el libro no entran al modelo; solo sirven para interpretar los grupos.
+| Técnica | Pregunta que responde | Entrada |
+|---|---|---|
+| **K-means (K = 3)**, técnica principal | ¿Qué tipos de colegio hay según su contexto y sus instrumentos de convivencia? | 9 atributos con z-score (37,260 colegios) |
+| **Reglas de asociación (Apriori)** | Si a un colegio le falta un instrumento, ¿qué más le falta? | Cada colegio = canasta de instrumentos que le faltan |
+| **DBSCAN espacial** | ¿Dónde se juntan muchos colegios sin libro? | Coordenadas en metros de los 6,269 colegios sin libro |
 
-Se comparó K = 2 a 6 (inercia, silueta, Davies-Bouldin y estabilidad), otras dos representaciones, DBSCAN y clustering jerárquico. Además, DBSCAN espacial ubica zonas con muchos colegios sin libro.
+El registro de incidencias, el libro, la repetición y el retiro **no entran** a K-means: son lo que se quiere explicar y solo se usan para interpretar los grupos. K = 3 se eligió por inercia, silueta, Davies-Bouldin y estabilidad (ARI), y los grupos se compararon con el jerárquico de Ward, con PCA y sin escalar.
+
+## Resultados principales
+
+- **Tres perfiles:** *Urbano grande* (11,460), *Rural con instrumentos* (20,725) y *Pocos instrumentos* (5,075). En este último, el 59 % no tiene libro y registra menos que los colegios rurales del mismo tamaño.
+- **Las faltas vienen juntas:** cuando faltan dos instrumentos, entre el 70 % y el 82 % de los colegios tampoco tiene libro (16.8 % en el total). Ser rural, por sí solo, casi no lo anticipa.
+- **Registrar no va junto con repetir más**, pero el 24 % de los colegios rurales sin libro tiene repetición alta.
+- **Dónde:** Amazonía (43 % de los colegios de Loreto en *Pocos instrumentos*) y sierra norte (la zona DBSCAN más grande, 1,689 colegios sin libro).
+- **Para la UGEL:** 1,112 colegios sin ninguno de los tres instrumentos; 949 tampoco tienen libro (630 en zonas, 319 aislados).
 
 ## Cómo ejecutar
 
@@ -39,11 +53,11 @@ Se comparó K = 2 a 6 (inercia, silueta, Davies-Bouldin y estabilidad), otras do
    ```bash
    pip install -r requirements.txt
    ```
-3. Abrir `Código/Rompebrechas_Hito3.ipynb` en Jupyter o VS Code y ejecutar todas las celdas en orden. Debe ejecutarse **desde la carpeta `Código/`**, porque ahí busca `peru_shapes/` y crea `salidas/`.
+3. Abrir `Código/Rompebrechas_Final.ipynb` en Jupyter o VS Code y ejecutar todas las celdas en orden. Debe ejecutarse **desde la carpeta `Código/`**, porque ahí busca `peru_shapes/` y crea `salidas/`.
 
-En Google Colab, además del notebook, hay que subir la carpeta `peru_shapes/`.
+**En Google Colab:** subir el notebook y la carpeta `peru_shapes/` (o `peru_shapes.zip`) al panel *Archivos*. La primera celda de código instala `apyori`; el resto de librerías ya viene en Colab.
 
-La ejecución completa toma entre 10 y 15 minutos.
+La ejecución completa toma pocos minutos (la mayor parte es la descarga de los datos).
 
 ## Estructura de archivos
 
@@ -51,12 +65,17 @@ La ejecución completa toma entre 10 y 15 minutos.
 ├── README.md
 ├── requirements.txt
 ├── Código/
-│   ├── Rompebrechas_Hito3.ipynb     # notebook ejecutado: de las fuentes a los resultados
-│   ├── peru_shapes/                 # límites de los departamentos para los mapas
-│   └── salidas/                     # matriz, diccionario y figuras (al ejecutar se generan también otros archivos)
+│   ├── Rompebrechas_Final.ipynb        # notebook ejecutado: de las fuentes al veredicto
+│   ├── peru_shapes/                    # límites de los departamentos para los mapas
+│   └── salidas/                        # lo que genera el notebook
+│       ├── base_integrada.parquet      #   una fila por colegio, ya limpia
+│       ├── matriz_analitica.csv        #   matriz analítica + diccionario_matriz.csv
+│       ├── colegios_prioritarios.csv   #   lista de 1,112 colegios para la UGEL
+│       ├── mapa_ugel_sin_libro.html    #   mapa interactivo (se abre sin Python)
+│       └── fig_*.png                   #   figuras del informe
 └── Informe/
-    ├── Informe_Hito3_Rompebrechas.tex
-    ├── Informe_Hito3_Rompebrechas.pdf
+    ├── Informe_Final_Rompebrechas.tex  # informe en formato IEEE
+    ├── Informe_Final_Rompebrechas.pdf
     └── figuras/
 ```
 
@@ -64,9 +83,14 @@ La ejecución completa toma entre 10 y 15 minutos.
 
 | Parte | Sección |
 |---|---|
-| Limpieza, integración y matriz analítica | 1 a 8 |
-| Representación: atributos y exclusiones | 8.2, 9.1, 10.1 a 10.3 y 10.11 |
-| Técnica y justificación | 10 (inicio) y 12.4 |
-| Configuraciones y métricas | 10.4 a 10.6, 10.9 a 10.12 y 12.2 |
-| Resultados preliminares | 10.8, 10.13, 11 y 12 |
-| Problemas y trabajo pendiente | 13 |
+| Problema, pregunta y fuentes | Planteamiento |
+| Limpieza de cada fuente | 1 a 4 |
+| Integración e indicadores | 5 |
+| El problema en los datos (EDA) | 6 |
+| Matriz analítica | 7 |
+| K-means: variables, escalamiento, elección de K y perfiles | 8.1 a 8.4 |
+| Comparación con otros métodos | 8.5 |
+| Reglas de asociación (Apriori) | 8.6 |
+| Mapa de los grupos y DBSCAN espacial | 9.1 y 9.2 |
+| Mapa interactivo y lista priorizada | 9.3 |
+| Veredicto, recomendaciones y limitaciones | 10 |
